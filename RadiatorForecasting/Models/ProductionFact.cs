@@ -1,6 +1,7 @@
 ﻿namespace RadiatorForecasting.Models
 {
     using System.ComponentModel.DataAnnotations;
+
     public class ProductionFact
     {
         [Key]
@@ -18,5 +19,18 @@
         public int AluminumRadiatorsProduced { get; set; } // Алюминиевые радиаторы
         public int CopperRadiatorsProduced { get; set; } // Медные радиаторы
 
+        // Поля для прогноза
+        public int? MonthlyForecastAluminum { get; set; } // Прогноз алюминиевых радиаторов
+        public int? MonthlyForecastCopper { get; set; } // Прогноз медных радиаторов
+
+        // Поля для запасов
+        public int? CurrentAluminumStock { get; set; } // Текущие запасы алюминия (в кг)
+        public int? RecommendedAluminumStock { get; set; } // Рекомендуемые запасы алюминия (в кг)
+        public int? CurrentCopperStock { get; set; } // Текущие запасы меди (в кг)
+        public int? RecommendedCopperStock { get; set; } // Рекомендуемые запасы меди (в кг)
+
+        // Коэффициенты расхода материала
+        public const int MaterialPerAluminumUnit = 3; // 3 кг алюминия на 1 радиатор
+        public const int MaterialPerCopperUnit = 5; // 5 кг меди на 1 радиатор
     }
 }

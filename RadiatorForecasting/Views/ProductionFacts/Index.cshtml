@@ -26,22 +26,11 @@
                     <td>@fact.Price</td>
                     <td>@fact.CompetitorPrice</td>
                     <td>@fact.Discount</td>
-                    <td>@fact.AluminumRadiatorsProduced / @fact.CopperRadiatorsProduced</td>
+                    <td>@($"{fact.AluminumRadiatorsProduced} / {fact.CopperRadiatorsProduced}")</td>
+                    <td>@($"{fact.MonthlyForecastAluminum ?? 0} / {fact.MonthlyForecastCopper ?? 0}")</td>
                     <td>
-                        @if (ViewBag.PredictionResult != null)
-                        {
-                            @("- / -")
-                        }
-                        else
-                        {
-                            @("- / -")
-                        }
-                    </td>
-                    <td>
-                        <text>
-                            Ал: - / -<br />
-                            Мед: - / -
-                        </text>
+                        Ал: @fact.CurrentAluminumStock / @fact.RecommendedAluminumStock<br />
+                        Мед: @fact.CurrentCopperStock / @fact.RecommendedCopperStock
                     </td>
                 </tr>
             }
@@ -51,63 +40,31 @@
 
 <h2>Прогнозирование спроса на следующий месяц</h2>
 
-<!-- Форма для ввода данных -->
-<form asp-action="Index" method="post">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Средняя температура</th>
-                <th>Цена</th>
-                <th>Цена конкурентов</th>
-                <th>Скидка</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    <input type="number"
-                           name="averageTemperature"
-                           min="-40"
-                           max="40"
-                           required
-                           value="@ViewBag.InputValues?.averageTemperature">
-                </td>
-                <td>
-                    <input type="number"
-                           name="price"
-                           min="1900"
-                           max="2800"
-                           required
-                           value="@ViewBag.InputValues?.price">
-                </td>
-                <td>
-                    <input type="number"
-                           name="competitorPrice"
-                           min="1800"
-                           max="3000"
-                           required
-                           value="@ViewBag.InputValues?.competitorPrice">
-                </td>
-                <td>
-                    <input type="number"
-                           name="discount"
-                           min="1"
-                           max="30"
-                           required
-                           value="@ViewBag.InputValues?.discount">
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-    <!-- Кнопка отправки -->
-    <button type="submit" class="btn btn-primary">Спрогнозировать</button>
+<form asp-action="Index" method="post" class="mt-4">
+    <div class="row">
+        <div class="col-md-3">
+            <input type="number" name="averageTemperature" class="form-control" placeholder="Температура"
+                   value="@ViewBag.InputValues?.averageTemperature ?? 0" required>
+        </div>
+        <div class="col-md-3">
+            <input type="number" name="price" class="form-control" placeholder="Цена"
+                   value="@ViewBag.InputValues?.price ?? 0" required>
+        </div>
+        <div class="col-md-3">
+            <input type="number" name="competitorPrice" class="form-control" placeholder="Цена конкурентов"
+                   value="@ViewBag.InputValues?.competitorPrice ?? 0" required>
+        </div>
+        <div class="col-md-3">
+            <input type="number" name="discount" class="form-control" placeholder="Скидка"
+                   value="@ViewBag.InputValues?.discount ?? 0" required>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary mt-3">Спрогнозировать</button>
 </form>
 
-<!-- Отображение результата прогноза -->
-@if (ViewBag.PredictionResult != null)
+@if (TempData["PredictionResult"] != null)
 {
     <div class="alert alert-success mt-3">
-        <strong>Результат прогноза:</strong> @ViewBag.PredictionResult
+        <strong>Результат прогноза:</strong> @TempData["PredictionResult"]
     </div>
 }
