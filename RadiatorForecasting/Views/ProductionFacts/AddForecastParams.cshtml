@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Добавить параметры прогноза";
+}
+
+<h2>Введите параметры для прогноза</h2>
+
+<form asp-action="AddForecastParams" method="post">
+    <div>
+        <label for="averageTemperature">Средняя температура:</label>
+        <input type="number" id="averageTemperature" name="averageTemperature" required min="-50" max="50">
+    </div>
+    <div>
+        <label for="price">Цена:</label>
+        <input type="number" id="price" name="price" required min="0">
+    </div>
+    <div>
+        <label for="competitorPrice">Цена конкурентов:</label>
+        <input type="number" id="competitorPrice" name="competitorPrice" required min="0">
+    </div>
+    <div>
+        <label for="discount">Скидка (0-100):</label>
+        <input type="number" id="discount" name="discount" required min="0" max="100">
+    </div>
+    <button type="submit">Отправить</button>
+</form>
