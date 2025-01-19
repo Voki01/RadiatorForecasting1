@@ -29,7 +29,7 @@
         public int? CurrentCopperStock { get; set; } // Текущие запасы меди (в кг)
         public int? RecommendedCopperStock { get; set; } // Рекомендуемые запасы меди (в кг)
 
-        // Коэффициенты расхода материала
+        // Коэффициенты расхода материалов
         public const int MaterialPerAluminumUnit = 3; // 3 кг алюминия на 1 радиатор
         public const int MaterialPerCopperUnit = 5; // 5 кг меди на 1 радиатор
     }

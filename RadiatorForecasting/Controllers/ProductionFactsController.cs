@@ -46,39 +46,49 @@ namespace RadiatorForecasting.Controllers
             var response = await client.PostAsync(url, content);
 
             string predictionResult = "Ошибка при выполнении прогноза.";
+            int aluminumForecast = 0;
+            int copperForecast = 0;
+
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadAsStringAsync();
                 var prediction = JsonSerializer.Deserialize<Dictionary<string, float>>(result);
 
-                predictionResult = $"Ал: {prediction["aluminum"]:0.##}, Мед: {prediction["copper"]:0.##}";
+                aluminumForecast = (int)Math.Round(prediction["aluminum"]);
+                copperForecast = (int)Math.Round(prediction["copper"]);
 
-                // Сохранение прогноза и расчёт рекомендуемых запасов
-                var newFact = new ProductionFact
-                {
-                    AverageTemperature = averageTemperature,
-                    Price = price,
-                    CompetitorPrice = competitorPrice,
-                    Discount = discount,
-                    MonthlyForecastAluminum = (int)Math.Round(prediction["aluminum"]),
-                    MonthlyForecastCopper = (int)Math.Round(prediction["copper"]),
-                    CurrentAluminumStock = 100, // Пример текущего запаса
-                    CurrentCopperStock = 50 // Пример текущего запаса
-                };
-
-                // Расчёт рекомендуемых запасов
-                newFact.RecommendedAluminumStock = newFact.CurrentAluminumStock +
-                    newFact.MonthlyForecastAluminum * ProductionFact.MaterialPerAluminumUnit;
-
-                newFact.RecommendedCopperStock = newFact.CurrentCopperStock +
-                    newFact.MonthlyForecastCopper * ProductionFact.MaterialPerCopperUnit;
-
-                _context.ProductionFacts.Add(newFact);
-                await _context.SaveChangesAsync();
+                predictionResult = $"Ал: {aluminumForecast:0.##}, Мед: {copperForecast:0.##}";
             }
 
-            TempData["PredictionResult"] = predictionResult; // Сохраняем результат прогноза
-            return RedirectToAction("Index"); // Перенаправление на GET
+            // Получение текущих запасов из базы данных
+            var aluminumStock = _context.Stocks.FirstOrDefault(s => s.Material == "Алюминий")?.CurrentStock ?? 0;
+            var copperStock = _context.Stocks.FirstOrDefault(s => s.Material == "Медь")?.CurrentStock ?? 0;
+
+            // Расчёт рекомендуемых запасов (без учёта текущих запасов)
+            int recommendedAluminumStock = aluminumForecast * ProductionFact.MaterialPerAluminumUnit;
+            int recommendedCopperStock = copperForecast * ProductionFact.MaterialPerCopperUnit;
+
+            // Добавление записи в таблицу "Факты выпуска"
+            var newFact = new ProductionFact
+            {
+                AverageTemperature = averageTemperature,
+                Price = price,
+                CompetitorPrice = competitorPrice,
+                Discount = discount,
+                MonthlyForecastAluminum = aluminumForecast,
+                MonthlyForecastCopper = copperForecast,
+                CurrentAluminumStock = aluminumStock,
+                CurrentCopperStock = copperStock,
+                RecommendedAluminumStock = recommendedAluminumStock,
+                RecommendedCopperStock = recommendedCopperStock
+            };
+
+            _context.ProductionFacts.Add(newFact);
+            await _context.SaveChangesAsync();
+
+            TempData["PredictionResult"] = predictionResult;
+
+            return RedirectToAction("Index");
         }
     }
 }
