@@ -6,6 +6,7 @@
     {
         [Key]
         public int Id { get; set; }
+        public string ForecastMonth { get; set; } // Столбец для отображения периода (месяц)
 
         [Range(-50, 50, ErrorMessage = "Температура должна быть от -50 до 50")]
         public int AverageTemperature { get; set; } // Средняя температура
@@ -32,5 +33,6 @@
         // Коэффициенты расхода материалов
         public const int MaterialPerAluminumUnit = 3; // 3 кг алюминия на 1 радиатор
         public const int MaterialPerCopperUnit = 5; // 5 кг меди на 1 радиатор
+
     }
 }

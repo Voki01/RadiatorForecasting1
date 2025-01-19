@@ -7,7 +7,7 @@
     <table class="table table-bordered table-striped">
         <thead class="table-dark text-center">
             <tr>
-                <th>ID</th>
+                <th>Период (месяц)</th>
                 <th>Средняя температура</th>
                 <th>Цена</th>
                 <th>Цена конкурентов</th>
@@ -21,7 +21,7 @@
             @foreach (var fact in Model)
             {
                 <tr>
-                    <td class="text-center">@fact.Id</td>
+                    <td class="text-center">@fact.ForecastMonth</td>
                     <td class="text-center">@fact.AverageTemperature</td>
                     <td class="text-center">@fact.Price</td>
                     <td class="text-center">@fact.CompetitorPrice</td>

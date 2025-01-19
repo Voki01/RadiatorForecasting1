@@ -68,9 +68,13 @@ namespace RadiatorForecasting.Controllers
             int recommendedAluminumStock = aluminumForecast * ProductionFact.MaterialPerAluminumUnit;
             int recommendedCopperStock = copperForecast * ProductionFact.MaterialPerCopperUnit;
 
+            // Вычисление месяца прогноза
+            var nextMonth = DateTime.Now.AddMonths(1).ToString("MMMM yyyy");
+
             // Добавление записи в таблицу "Факты выпуска"
             var newFact = new ProductionFact
             {
+                ForecastMonth = nextMonth, // Устанавливаем период прогноза
                 AverageTemperature = averageTemperature,
                 Price = price,
                 CompetitorPrice = competitorPrice,
@@ -90,5 +94,6 @@ namespace RadiatorForecasting.Controllers
 
             return RedirectToAction("Index");
         }
+
     }
 }
