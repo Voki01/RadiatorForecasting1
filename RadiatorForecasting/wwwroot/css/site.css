@@ -1,22 +1,94 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+}
+
+/* Стиль контейнера для таблицы */
+.table-container {
+    max-height: 400px; /* Ограничение высоты таблицы */
+    overflow-y: auto; /* Включаем вертикальную прокрутку */
+    border: 1px solid #ddd; /* Граница вокруг таблицы */
+    background-color: #f9f9f9; /* Светлый фон */
+}
+
+    .table-container .table {
+        margin-bottom: 0; /* Убираем отступы у таблицы */
+        font-size: 14px; /* Уменьшаем шрифт для таблицы */
+        text-align: center; /* Центрируем текст */
+    }
+
+.table th,
+.table td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 8px;
+}
+
+/* Стиль для формы */
+.forecast-form {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f5f5f5;
+    max-width: 100%; /* Ограничиваем ширину формы */
+    margin-left: auto; /* Центрируем форму */
+    margin-right: auto; /* Центрируем форму */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Центрируем содержимое */
+    gap: 20px; /* Промежуток между строками */
+}
+
+    .forecast-form .row {
+        display: flex; /* Выстраиваем элементы в строку */
+        justify-content: space-between; /* Равномерное распределение с пространством между элементами */
+        align-items: center; /* Центрируем элементы по вертикали */
+        width: 100%; /* Занимает всю доступную ширину */
+        padding: 0 15px; /* Отступы по краям строки */
+    }
+
+    .forecast-form .form-control {
+        font-size: 14px; /* Размер текста */
+        padding: 8px; /* Внутренний отступ */
+        height: 40px; /* Высота полей */
+        max-width: 300px; /* Ограничиваем максимальную ширину */
+    }
+
+    .forecast-form .form-label {
+        font-weight: bold;
+        text-align: center;
+        display: block; /* Убедимся, что <label> занимает всю ширину */
+        height: 2.5em; /* Фиксируем высоту */
+        line-height: 1.2em; /* Устанавливаем высоту строки для переноса текста */
+        margin-bottom: 5px; /* Отступ снизу */
+        margin-top:5px;
+        overflow: hidden; /* Скрываем лишний текст, если он выходит за пределы */
+    }
+
+button.btn {
+    width: 200px;
+    align-self: center; /* Центрируем кнопку */
 }

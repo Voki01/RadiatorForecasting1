@@ -1,11 +1,11 @@
 ﻿@model IEnumerable<RadiatorForecasting.Models.ProductionFact>
 
-<h1>Фактические данные выпуска</h1>
+<h1 class="text-center">Фактические данные выпуска</h1>
 
-@if (Model.Any())
-{
-    <table class="table">
-        <thead>
+<!-- Контейнер для таблицы -->
+<div class="table-container">
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark text-center">
             <tr>
                 <th>ID</th>
                 <th>Средняя температура</th>
@@ -21,50 +21,85 @@
             @foreach (var fact in Model)
             {
                 <tr>
-                    <td>@fact.Id</td>
-                    <td>@fact.AverageTemperature</td>
-                    <td>@fact.Price</td>
-                    <td>@fact.CompetitorPrice</td>
-                    <td>@fact.Discount</td>
-                    <td>@($"{fact.AluminumRadiatorsProduced} / {fact.CopperRadiatorsProduced}")</td>
-                    <td>@($"{fact.MonthlyForecastAluminum ?? 0} / {fact.MonthlyForecastCopper ?? 0}")</td>
-                    <td>
-                        Ал: @fact.CurrentAluminumStock / @fact.RecommendedAluminumStock<br />
-                        Мед: @fact.CurrentCopperStock / @fact.RecommendedCopperStock
+                    <td class="text-center">@fact.Id</td>
+                    <td class="text-center">@fact.AverageTemperature</td>
+                    <td class="text-center">@fact.Price</td>
+                    <td class="text-center">@fact.CompetitorPrice</td>
+                    <td class="text-center">@fact.Discount</td>
+                    <td class="text-center">@($"{fact.AluminumRadiatorsProduced} / {fact.CopperRadiatorsProduced}")</td>
+                    <td class="text-center">@($"{fact.MonthlyForecastAluminum} / {fact.MonthlyForecastCopper}")</td>
+                    <td class="text-center">
+                        <text>
+                            Ал: @fact.CurrentAluminumStock / @fact.RecommendedAluminumStock<br />
+                            Мед: @fact.CurrentCopperStock / @fact.RecommendedCopperStock
+                        </text>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
-}
+</div>
 
-<h2>Прогнозирование спроса на следующий месяц</h2>
+<h2 class="text-center mt-4">Прогнозирование спроса на следующий месяц</h2>
 
-<form asp-action="Index" method="post" class="mt-4">
-    <div class="row">
+<!-- Форма для ввода данных -->
+<form asp-action="Index" method="post" class="forecast-form">
+    <div class="row mb-3">
         <div class="col-md-3">
-            <input type="number" name="averageTemperature" class="form-control" placeholder="Температура"
-                   value="@ViewBag.InputValues?.averageTemperature ?? 0" required>
+            <label for="averageTemperature" class="form-label">Среднемесячная температура окружающей среды</label>
+            <input type="number"
+                   id="averageTemperature"
+                   class="form-control"
+                   name="averageTemperature"
+                   min="-40"
+                   max="40"
+                   required
+                   value="@ViewBag.InputValues?.averageTemperature">
         </div>
         <div class="col-md-3">
-            <input type="number" name="price" class="form-control" placeholder="Цена"
-                   value="@ViewBag.InputValues?.price ?? 0" required>
+            <label for="price" class="form-label">Цена</label>
+            <input type="number"
+                   id="price"
+                   class="form-control"
+                   name="price"
+                   min="1900"
+                   max="2800"
+                   required
+                   value="@ViewBag.InputValues?.price">
         </div>
         <div class="col-md-3">
-            <input type="number" name="competitorPrice" class="form-control" placeholder="Цена конкурентов"
-                   value="@ViewBag.InputValues?.competitorPrice ?? 0" required>
+            <label for="competitorPrice" class="form-label">Цена конкурентов</label>
+            <input type="number"
+                   id="competitorPrice"
+                   class="form-control"
+                   name="competitorPrice"
+                   min="1800"
+                   max="3000"
+                   required
+                   value="@ViewBag.InputValues?.competitorPrice">
         </div>
         <div class="col-md-3">
-            <input type="number" name="discount" class="form-control" placeholder="Скидка"
-                   value="@ViewBag.InputValues?.discount ?? 0" required>
+            <label for="discount" class="form-label">Скидка</label>
+            <input type="number"
+                   id="discount"
+                   class="form-control"
+                   name="discount"
+                   min="1"
+                   max="30"
+                   required
+                   value="@ViewBag.InputValues?.discount">
         </div>
     </div>
-    <button type="submit" class="btn btn-primary mt-3">Спрогнозировать</button>
+    <button type="submit" class="btn btn-primary btn-lg">Спрогнозировать</button>
 </form>
 
+
+
+
+<!-- Отображение результата прогноза -->
 @if (TempData["PredictionResult"] != null)
 {
-    <div class="alert alert-success mt-3">
+    <div class="alert alert-success mt-3 text-center">
         <strong>Результат прогноза:</strong> @TempData["PredictionResult"]
     </div>
 }
