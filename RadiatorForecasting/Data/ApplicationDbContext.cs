@@ -11,5 +11,7 @@ namespace RadiatorForecasting.Data
 
         // Таблица для фактов выпуска
         public DbSet<ProductionFact> ProductionFacts { get; set; }
+        public DbSet<Stock> Stocks { get; set; }
+
     }
 }

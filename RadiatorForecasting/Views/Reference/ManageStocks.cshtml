@@ -1,0 +1,47 @@
+﻿@using RadiatorForecasting.Models
+@model IEnumerable<Stock>
+
+@{
+    Layout = "~/Views/Shared/_ReferenceLayout.cshtml";
+}
+
+<h1>Введение текущих запасов</h1>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Материал</th>
+            <th>Текущий запас (кг)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var stock in Model)
+        {
+            <tr>
+                <td>@stock.Material</td>
+                <td>@stock.CurrentStock</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h2>Добавить или обновить запасы</h2>
+<form asp-action="UpdateStock" method="post">
+    <div class="mb-3">
+        <label for="material" class="form-label">Материал:</label>
+        <select name="material" id="material" class="form-control">
+            <option value="Алюминий">Алюминий</option>
+            <option value="Медь">Медь</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="currentStock" class="form-label">Текущий запас (кг):</label>
+        <input type="number" name="currentStock" id="currentStock" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
