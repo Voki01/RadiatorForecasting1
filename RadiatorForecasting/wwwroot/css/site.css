@@ -46,6 +46,15 @@ body {
     padding: 8px;
 }
 
+.table th {
+    padding: 12px;
+    text-align: center;
+    background-color: #343a40; /* Тёмный фон */
+    color: white; /* Белый текст */
+    font-weight: bold; /* Жирный шрифт */
+    border: 1px solid #ddd; /* Тонкая рамка */
+}
+
 /* Стиль для формы */
 .forecast-form {
     margin-top: 20px;

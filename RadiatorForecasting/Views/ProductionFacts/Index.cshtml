@@ -1,6 +1,8 @@
 ﻿@model IEnumerable<RadiatorForecasting.Models.ProductionFact>
 
-<h1 class="text-center">Фактические данные выпуска</h1>
+<h1 class="text-center mt-4 mb-4">Прогноз и расчет запасов для алюминиевых и медных радиаторов</h1>
+
+<h2 class="text-center">Фактические данные выпуска</h2>
 
 <!-- Контейнер для таблицы -->
 <div class="table-container">
@@ -8,13 +10,13 @@
         <thead class="table-dark text-center">
             <tr>
                 <th>Период (месяц)</th>
-                <th>Средняя температура</th>
-                <th>Цена</th>
-                <th>Цена конкурентов</th>
-                <th>Скидка</th>
-                <th>Кол-во радиаторов (Ал/Мед)</th>
-                <th>Прогноз на месяц (Ал/Мед)</th>
-                <th>Запасы (текущие/рекомендуемые)</th>
+                <th>Среднемесячная температура окружающей среды (°C)</th>
+                <th>Цена (руб)</th>
+                <th>Рыночная цена (руб) </th>
+                <th>Скидка (%)</th>
+                <th>Количество выпущенных [алюмелевые/медные (шт)]</th>
+                <th>Прогноз на месяц [алюмелевые/медные (шт)]</th>
+                <th>Запасы [текущие/рекомендуемые (кг)]</th>
             </tr>
         </thead>
         <tbody>
@@ -40,7 +42,9 @@
     </table>
 </div>
 
-<h2 class="text-center mt-4">Прогнозирование спроса на следующий месяц</h2>
+<h2 class="text-center mt-4">
+    Прогнозирование спроса на @(DateTime.Now.AddMonths(1).ToString("MMMM yyyy", new System.Globalization.CultureInfo("ru-RU")))
+</h2>
 
 <!-- Форма для ввода данных -->
 <form asp-action="Index" method="post" class="forecast-form">
