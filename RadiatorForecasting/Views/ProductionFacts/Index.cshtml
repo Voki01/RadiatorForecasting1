@@ -103,3 +103,11 @@
         <strong>Результат прогноза:</strong> @TempData["PredictionResult"]
     </div>
 }
+
+<!-- Отображение предупреждения -->
+@if (TempData["WarningMessage"] != null && !string.IsNullOrWhiteSpace(TempData["WarningMessage"].ToString()))
+{
+    <div class="alert alert-warning mt-3">
+        <pre style="white-space: pre-wrap; font-size: 14px;">@TempData["WarningMessage"]</pre>
+    </div>
+}

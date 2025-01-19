@@ -64,9 +64,36 @@ namespace RadiatorForecasting.Controllers
             var aluminumStock = _context.Stocks.FirstOrDefault(s => s.Material == "Алюминий")?.CurrentStock ?? 0;
             var copperStock = _context.Stocks.FirstOrDefault(s => s.Material == "Медь")?.CurrentStock ?? 0;
 
-            // Расчёт рекомендуемых запасов (без учёта текущих запасов)
+            // Расчёт рекомендуемых запасов
             int recommendedAluminumStock = aluminumForecast * ProductionFact.MaterialPerAluminumUnit;
             int recommendedCopperStock = copperForecast * ProductionFact.MaterialPerCopperUnit;
+
+            // Вычисление нехватки запасов
+            int aluminumShortage = Math.Max(0, recommendedAluminumStock - aluminumStock);
+            int copperShortage = Math.Max(0, recommendedCopperStock - copperStock);
+
+            // Вычисление, на сколько радиаторов хватает текущих запасов
+            int aluminumRadiatorsPossible = aluminumStock / ProductionFact.MaterialPerAluminumUnit;
+            int copperRadiatorsPossible = copperStock / ProductionFact.MaterialPerCopperUnit;
+
+            // Формирование предупреждения
+            string warningMessage = "";
+            if (aluminumShortage > 0 || copperShortage > 0)
+            {
+                warningMessage += "Предупреждение:\n";
+                if (aluminumShortage > 0)
+                {
+                    warningMessage += $"Не хватает {aluminumShortage} кг алюминия для производства {aluminumForecast} радиаторов.\n";
+                }
+                if (copperShortage > 0)
+                {
+                    warningMessage += $"Не хватает {copperShortage} кг меди для производства {copperForecast} радиаторов.\n";
+                }
+                warningMessage += "Рекомендуется пополнить запасы.\n\n";
+
+                warningMessage += $"Текущих запасов алюминия хватит на производство {aluminumRadiatorsPossible} радиаторов.\n";
+                warningMessage += $"Текущих запасов меди хватит на производство {copperRadiatorsPossible} радиаторов.\n";
+            }
 
             // Вычисление месяца прогноза
             var nextMonth = DateTime.Now.AddMonths(1).ToString("MMMM yyyy");
@@ -91,9 +118,11 @@ namespace RadiatorForecasting.Controllers
             await _context.SaveChangesAsync();
 
             TempData["PredictionResult"] = predictionResult;
+            TempData["WarningMessage"] = warningMessage;
 
             return RedirectToAction("Index");
         }
+
 
     }
 }

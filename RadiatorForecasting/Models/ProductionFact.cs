@@ -6,6 +6,7 @@
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string ForecastMonth { get; set; } // Столбец для отображения периода (месяц)
 
         [Range(-50, 50, ErrorMessage = "Температура должна быть от -50 до 50")]
