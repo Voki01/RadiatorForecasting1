@@ -97,8 +97,43 @@
     <button type="submit" class="btn btn-primary btn-lg">Спрогнозировать</button>
 </form>
 
+@if (TempData["ExistingForecast"] != null)
+{
+    <div class="modal fade" id="overwriteModal" tabindex="-1" aria-labelledby="overwriteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="overwriteModalLabel">Предупреждение</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    @TempData["ExistingForecast"]
+                </div>
+                <div class="modal-footer">
+                    @if (TempData["InputValues"] != null)
+                    {
+                        var inputValues = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>(TempData["InputValues"].ToString());
+                        <form asp-action="Index" method="post">
+                            @foreach (var input in inputValues)
+                            {
+                                <input type="hidden" name="@input.Key" value="@input.Value.ToString()" />
+                            }
+                            <input type="hidden" name="overwrite" value="true" />
+                            <button type="submit" class="btn btn-primary">Перепрогнозировать</button>
+                        </form>
+                    }
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отменить</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-
+    <script>
+        // Автоматическое открытие модального окна
+        var modal = new bootstrap.Modal(document.getElementById('overwriteModal'));
+        modal.show();
+    </script>
+}
 
 <!-- Отображение результата прогноза -->
 @if (TempData["PredictionResult"] != null)
@@ -108,10 +143,11 @@
     </div>
 }
 
-<!-- Отображение предупреждения -->
+<!-- Отображение предупреждения о запасах -->
 @if (TempData["WarningMessage"] != null && !string.IsNullOrWhiteSpace(TempData["WarningMessage"].ToString()))
 {
     <div class="alert alert-warning mt-3">
         <pre style="white-space: pre-wrap; font-size: 14px;">@TempData["WarningMessage"]</pre>
     </div>
 }
+

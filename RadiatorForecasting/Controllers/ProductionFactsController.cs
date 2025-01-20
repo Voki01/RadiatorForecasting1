@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RadiatorForecasting.Data;
 using RadiatorForecasting.Models;
+using System;
 using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
@@ -28,7 +29,7 @@ namespace RadiatorForecasting.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(int averageTemperature, int price, int competitorPrice, int discount)
+        public async Task<IActionResult> Index(int averageTemperature, int price, int competitorPrice, int discount, bool overwrite = false)
         {
             var client = _httpClientFactory.CreateClient();
             var url = "http://127.0.0.1:5000/predict";
@@ -90,31 +91,63 @@ namespace RadiatorForecasting.Controllers
                     warningMessage += $"Не хватает {copperShortage} кг меди для производства {copperForecast} радиаторов.\n";
                 }
                 warningMessage += "Рекомендуется пополнить запасы.\n\n";
-
                 warningMessage += $"Текущих запасов алюминия хватит на производство {aluminumRadiatorsPossible} радиаторов.\n";
                 warningMessage += $"Текущих запасов меди хватит на производство {copperRadiatorsPossible} радиаторов.\n";
             }
 
-            // Вычисление месяца прогноза
+            // Проверка существующего прогноза
             var nextMonth = DateTime.Now.AddMonths(1).ToString("MMMM yyyy");
-
-            // Добавление записи в таблицу "Факты выпуска"
-            var newFact = new ProductionFact
+            var existingForecast = _context.ProductionFacts.FirstOrDefault(f => f.ForecastMonth == nextMonth);
+            if (existingForecast != null && !overwrite)
             {
-                ForecastMonth = nextMonth, // Устанавливаем период прогноза
-                AverageTemperature = averageTemperature,
-                Price = price,
-                CompetitorPrice = competitorPrice,
-                Discount = discount,
-                MonthlyForecastAluminum = aluminumForecast,
-                MonthlyForecastCopper = copperForecast,
-                CurrentAluminumStock = aluminumStock,
-                CurrentCopperStock = copperStock,
-                RecommendedAluminumStock = recommendedAluminumStock,
-                RecommendedCopperStock = recommendedCopperStock
-            };
+                // Если прогноз существует и пользователь не выбрал "Перепрогнозировать"
+                TempData["ExistingForecast"] = "Прогноз на следующий месяц уже существует. Вы хотите его переписать?";
+                TempData["InputValues"] = JsonSerializer.Serialize(new Dictionary<string, object>
+        {
+            { "averageTemperature", averageTemperature },
+            { "price", price },
+            { "competitorPrice", competitorPrice },
+            { "discount", discount }
+        });
 
-            _context.ProductionFacts.Add(newFact);
+                return RedirectToAction("Index");
+            }
+
+            // Если перепрогнозирование подтверждено или прогноз отсутствует
+            if (existingForecast != null && overwrite)
+            {
+                // Обновляем существующий прогноз
+                existingForecast.AverageTemperature = averageTemperature;
+                existingForecast.Price = price;
+                existingForecast.CompetitorPrice = competitorPrice;
+                existingForecast.Discount = discount;
+                existingForecast.MonthlyForecastAluminum = aluminumForecast;
+                existingForecast.MonthlyForecastCopper = copperForecast;
+                existingForecast.CurrentAluminumStock = aluminumStock;
+                existingForecast.CurrentCopperStock = copperStock;
+                existingForecast.RecommendedAluminumStock = recommendedAluminumStock;
+                existingForecast.RecommendedCopperStock = recommendedCopperStock;
+            }
+            else
+            {
+                // Добавляем новый прогноз
+                var newFact = new ProductionFact
+                {
+                    ForecastMonth = nextMonth,
+                    AverageTemperature = averageTemperature,
+                    Price = price,
+                    CompetitorPrice = competitorPrice,
+                    Discount = discount,
+                    MonthlyForecastAluminum = aluminumForecast,
+                    MonthlyForecastCopper = copperForecast,
+                    CurrentAluminumStock = aluminumStock,
+                    CurrentCopperStock = copperStock,
+                    RecommendedAluminumStock = recommendedAluminumStock,
+                    RecommendedCopperStock = recommendedCopperStock
+                };
+                _context.ProductionFacts.Add(newFact);
+            }
+
             await _context.SaveChangesAsync();
 
             TempData["PredictionResult"] = predictionResult;
@@ -122,6 +155,7 @@ namespace RadiatorForecasting.Controllers
 
             return RedirectToAction("Index");
         }
+
 
 
     }
