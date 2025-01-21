@@ -50,5 +50,59 @@ namespace RadiatorForecasting.Controllers
             TempData["Message"] = "Запасы успешно обновлены.";
             return RedirectToAction("ManageStocks");
         }
+
+        //отображение страницы "Количество выпущенных"
+        public IActionResult ManageReleasedProductions()
+        {
+            var productionFacts = _context.ProductionFacts
+                .Select(f => new ReleasedProductionViewModel
+                {
+                    Id = f.Id,
+                    Period = f.ForecastMonth,
+                    AluminumReleased = _context.ReleasedProductions
+                        .Where(r => r.ProductionFactId == f.Id)
+                        .Select(r => r.AluminumQuantity)
+                        .FirstOrDefault(),
+                    CopperReleased = _context.ReleasedProductions
+                        .Where(r => r.ProductionFactId == f.Id)
+                        .Select(r => r.CopperQuantity)
+                        .FirstOrDefault()
+                }).ToList();
+
+            return View(productionFacts);
+        }
+
+
+        [HttpPost]
+        public IActionResult SaveReleasedProduction(int productionFactId, string material, int quantity)
+        {
+            var releasedProduction = _context.ReleasedProductions
+                .FirstOrDefault(r => r.ProductionFactId == productionFactId);
+
+            if (releasedProduction == null)
+            {
+                releasedProduction = new ReleasedProduction
+                {
+                    ProductionFactId = productionFactId,
+                    AluminumQuantity = material == "Алюминий" ? quantity : 0,
+                    CopperQuantity = material == "Медь" ? quantity : 0
+                };
+                _context.ReleasedProductions.Add(releasedProduction);
+            }
+            else
+            {
+                if (material == "Алюминий")
+                    releasedProduction.AluminumQuantity += quantity;
+                else if (material == "Медь")
+                    releasedProduction.CopperQuantity += quantity;
+            }
+
+            _context.SaveChanges();
+
+            return RedirectToAction("ManageReleasedProductions");
+        }
+
+
+
     }
 }

@@ -23,10 +23,27 @@ namespace RadiatorForecasting.Controllers
 
         public IActionResult Index()
         {
+            // Загружаем данные из ProductionFacts
             var productionFacts = _context.ProductionFacts.ToList();
+
+            // Обновляем данные на основе таблицы ReleasedProductions
+            foreach (var fact in productionFacts)
+            {
+                var releasedProduction = _context.ReleasedProductions.FirstOrDefault(r => r.ProductionFactId == fact.Id);
+                if (releasedProduction != null)
+                {
+                    fact.AluminumRadiatorsProduced = releasedProduction.AluminumQuantity;
+                    fact.CopperRadiatorsProduced = releasedProduction.CopperQuantity;
+                }
+            }
+
+            // Сохраняем изменения в базе данных
+            _context.SaveChanges();
+
             ViewBag.PredictionResult = null;
             return View(productionFacts);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Index(int averageTemperature, int price, int competitorPrice, int discount, bool overwrite = false)
