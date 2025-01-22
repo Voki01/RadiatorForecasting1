@@ -136,6 +136,41 @@ namespace RadiatorForecasting.Controllers
         }
 
 
+        // Отображение страницы "Введение отделов"
+        public IActionResult ManageDepartments()
+        {
+            var departments = _context.Departments
+                .Select(d => new
+                {
+                    d.Id,
+                    d.Name,
+                    CompanyName = d.Company.Name
+                })
+                .ToList();
+
+            ViewBag.Companies = _context.Companies.ToList(); // Для выпадающего списка
+            return View(departments);
+        }
+
+        // Добавление нового отдела
+        [HttpPost]
+        public IActionResult AddDepartment(string departmentName, int companyId)
+        {
+            if (!string.IsNullOrEmpty(departmentName) && companyId > 0)
+            {
+                var department = new Department
+                {
+                    Name = departmentName,
+                    CompanyId = companyId
+                };
+
+                _context.Departments.Add(department);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("ManageDepartments");
+        }
+
 
 
     }

@@ -1,0 +1,60 @@
+﻿@using RadiatorForecasting.Models
+@model IEnumerable<dynamic>
+
+@{
+    Layout = "~/Views/Shared/_ReferenceLayout.cshtml";
+}
+
+<h1>Введение отделов</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Код отдела</th>
+            <th>Наименование отдела</th>
+            <th>Наименование предприятия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var department in Model)
+        {
+            <tr>
+                <td>@department.Id</td>
+                <td>@department.Name</td>
+                <td>@department.CompanyName</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h3>Добавление отдела</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Наименование отдела</th>
+            <th>Предприятие</th>
+            <th>Действие</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <form asp-action="AddDepartment" method="post">
+            <td>
+                <input type="text" name="departmentName" class="form-control" required />
+            </td>
+            <td>
+                <select name="companyId" class="form-control" required>
+                    <option value="">Выберите предприятие</option>
+                        @foreach (var company in ViewBag.Companies as List<Company>)
+                        {
+                        <option value="@company.Id">@company.Name</option>
+                        }
+                </select>
+            </td>
+            <td>
+                <button type="submit" class="btn btn-primary">Добавить</button>
+            </td>
+            </form>
+        </tr>
+    </tbody>
+</table>
