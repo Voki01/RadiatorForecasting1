@@ -13,6 +13,8 @@ namespace RadiatorForecasting.Data
         public DbSet<ProductionFact> ProductionFacts { get; set; }
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<ReleasedProduction> ReleasedProductions { get; set; }
+        public DbSet<Company> Companies { get; set; }
+
 
 
     }

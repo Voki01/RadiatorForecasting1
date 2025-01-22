@@ -102,6 +102,40 @@ namespace RadiatorForecasting.Controllers
             return RedirectToAction("ManageReleasedProductions");
         }
 
+        //Компания
+        public IActionResult ManageCompanies()
+        {
+            var companies = _context.Companies.ToList();
+            return View(companies);
+        }
+        //Добавление компании
+        [HttpPost]
+        public IActionResult AddCompany(string name)
+        {
+            if (!string.IsNullOrEmpty(name))
+            {
+                var newCompany = new Company { Name = name };
+                _context.Companies.Add(newCompany);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("ManageCompanies");
+        }
+        //Обновление компании
+        [HttpPost]
+        public IActionResult UpdateCompany(int id, string name)
+        {
+            var company = _context.Companies.FirstOrDefault(c => c.Id == id);
+            if (company != null && !string.IsNullOrEmpty(name))
+            {
+                company.Name = name;
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("ManageCompanies");
+        }
+
+
 
 
     }
