@@ -102,4 +102,15 @@ button.btn {
     align-self: center; /* Центрируем кнопку */
 }
 
+.dropdown-menu .dropdown-divider {
+    border-top: 1px solid #e0e0e0 !important; /* Принудительно устанавливаем светло-серый цвет */
+    margin: 0.25rem 0 !important; /* Уменьшаем отступы */
+}
+
+
+/* Убираем обводку кнопки при нажатии */
+.dropdown-toggle:focus {
+    box-shadow: none !important;
+    outline: none !important;
+}
 
