@@ -49,12 +49,14 @@ namespace RadiatorForecasting.Controllers
 
             if (result.Succeeded)
             {
+                // Универсальный редирект на Home/Index
                 return RedirectToAction("Index", "Home");
             }
 
             ModelState.AddModelError(string.Empty, "Неверный email или пароль.");
             return View();
         }
+
 
         // POST: /Account/Logout
         [HttpPost]
@@ -65,3 +67,7 @@ namespace RadiatorForecasting.Controllers
         }
     }
 }
+
+
+
+

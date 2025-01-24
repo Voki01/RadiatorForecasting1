@@ -53,7 +53,12 @@
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
                             <li><a class="dropdown-item" href="/Profile">Профиль</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/Account/Logout">Выйти</a></li>
+                            <li>
+                                <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
+                                    <button type="submit" class="dropdown-item">Выйти</button>
+                                </form>
+                            </li>
+
                         </ul>
                     </div>
                 </div>
