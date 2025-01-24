@@ -1,0 +1,73 @@
+﻿@model IEnumerable<dynamic>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="mt-4 mb-3">Управление пользователями</h1>
+
+<table class="table table-bordered admin-users-table">
+    <thead class="table-light">
+        <tr>
+            <th>Email</th>
+            <th>Логин</th>
+            <th>Пароль</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>
+                    <input type="text" class="form-control email-input" value="@user.Email" data-id="@user.Id" />
+                </td>
+                <td>@user.UserName</td>
+                <td>
+                    <input type="password" class="form-control password-input" placeholder="Введите новый пароль" data-id="@user.Id" />
+                </td>
+                <td>
+                    <button class="btn btn-primary btn-sm save-button" data-id="@user.Id">Сохранить</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const saveButtons = document.querySelectorAll(".save-button");
+
+        saveButtons.forEach(button => {
+            button.addEventListener("click", () => {
+                const userId = button.getAttribute("data-id");
+                const emailField = document.querySelector(`.email-input[data-id='${userId}']`);
+                const passwordField = document.querySelector(`.password-input[data-id='${userId}']`);
+
+                const email = emailField.value.trim();
+                const password = passwordField.value.trim();
+
+                fetch('/Admin/UpdateUser', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id: userId,
+                        email: email,
+                        password: password
+                    })
+                }).then(response => {
+                    if (response.ok) {
+                        alert("Данные пользователя успешно обновлены.");
+                        if (password) passwordField.value = ""; // Сбрасываем поле пароля после сохранения
+                    } else {
+                        alert("Ошибка при обновлении данных пользователя.");
+                    }
+                }).catch(error => {
+                    console.error("Ошибка:", error);
+                    alert("Ошибка при обновлении данных пользователя.");
+                });
+            });
+        });
+    });
+</script>

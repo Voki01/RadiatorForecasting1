@@ -78,12 +78,6 @@ app.Use(async (context, next) =>
     await next();
 });
 
-// Добавление ролей и пользователей
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    await SeedRolesAndUsersAsync(services);
-}
 
 // Маршруты
 app.MapControllerRoute(
@@ -92,51 +86,3 @@ app.MapControllerRoute(
 
 app.Run();
 
-// Метод для создания тестовых пользователей и ролей
-static async Task SeedRolesAndUsersAsync(IServiceProvider services)
-{
-    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
-
-    // Создание ролей
-    string[] roleNames = { "Оператор", "Руководитель" };
-    foreach (var roleName in roleNames)
-    {
-        if (!await roleManager.RoleExistsAsync(roleName))
-        {
-            await roleManager.CreateAsync(new IdentityRole(roleName));
-        }
-    }
-
-    // Создание тестового пользователя-оператора
-    var operatorUser = new IdentityUser
-    {
-        UserName = "operator@mail.com",
-        Email = "operator@mail.com",
-        EmailConfirmed = true
-    };
-    if (await userManager.FindByEmailAsync(operatorUser.Email) == null)
-    {
-        var result = await userManager.CreateAsync(operatorUser, "Operator123!");
-        if (result.Succeeded)
-        {
-            await userManager.AddToRoleAsync(operatorUser, "Оператор");
-        }
-    }
-
-    // Создание тестового пользователя-руководителя
-    var managerUser = new IdentityUser
-    {
-        UserName = "manager@mail.com",
-        Email = "manager@mail.com",
-        EmailConfirmed = true
-    };
-    if (await userManager.FindByEmailAsync(managerUser.Email) == null)
-    {
-        var result = await userManager.CreateAsync(managerUser, "Manager123!");
-        if (result.Succeeded)
-        {
-            await userManager.AddToRoleAsync(managerUser, "Руководитель");
-        }
-    }
-}

@@ -1,0 +1,13 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
+@inject RoleManager<IdentityRole> RoleManager
+@model IdentityUser
+
+@{
+    var roles = await UserManager.GetRolesAsync(Model);
+}
+
+@foreach (var role in roles)
+{
+    <span class="badge bg-primary">@role</span>
+}

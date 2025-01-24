@@ -114,3 +114,24 @@ button.btn {
     outline: none !important;
 }
 
+.admin-users-table thead th {
+    background-color: #f8f9fa; /* Светло-серый фон */
+    color: #212529; /* Тёмный текст */
+    font-weight: bold; /* Жирный шрифт */
+    text-align: center; /* Центрируем текст */
+    vertical-align: middle; /* Центрируем по вертикали */
+}
+
+.admin-users-table {
+    border: 1px solid #dee2e6; /* Граница таблицы */
+}
+
+.admin-users-table td, .admin-users-table th {
+        text-align: center; /* Центрируем текст */
+        vertical-align: middle; /* Центрируем по вертикали */
+}
+
+
+
+
+
