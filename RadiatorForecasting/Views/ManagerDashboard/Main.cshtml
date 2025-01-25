@@ -1,1 +1,99 @@
-﻿
+﻿@{
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+    ViewData["Title"] = "Главная";
+}
+
+<div class="container-fluid">
+    <!-- Заголовок страницы -->
+    <h1 class="display-5 fw-bold text-center mt-3">Прогнозирование и расчёт запасов</h1>
+    <hr class="mt-3 mb-4" style="border-top: 3px solid #b0b0b0;"> <!-- Тёмная линия -->
+    <!-- Фактические данные выпуска -->
+    <h2 class="mt-4">Фактические данные выпуска</h2>
+    <div class="table-container mx-auto" style="max-width: 100%; overflow-x: auto;">
+        <table class="table table-bordered table-striped">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th>Период (месяц)</th>
+                    <th>Среднемесячная температура окружающей среды (°C)</th>
+                    <th>Цена (руб)</th>
+                    <th>Рыночная цена (руб)</th>
+                    <th>Скидка (%)</th>
+                    <th>Количество выпущенных [алюминиевые/медные (шт)]</th>
+                    <th>Прогноз на месяц [алюминиевые/медные (шт)]</th>
+                    <th>Запасы [текущие/рекомендуемые (кг)]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var fact in Model)
+                {
+                    <tr>
+                        <td class="text-center">@fact.ForecastMonth</td>
+                        <td class="text-center">@fact.AverageTemperature</td>
+                        <td class="text-center">@fact.Price</td>
+                        <td class="text-center">@fact.CompetitorPrice</td>
+                        <td class="text-center">@fact.Discount</td>
+                        <td class="text-center">@($"{fact.AluminumRadiatorsProduced} / {fact.CopperRadiatorsProduced}")</td>
+                        <td class="text-center">@($"{fact.MonthlyForecastAluminum ?? 0} / {fact.MonthlyForecastCopper ?? 0}")</td>
+                        <td class="text-center">
+                            <text>
+                                Ал: @fact.CurrentAluminumStock / @fact.RecommendedAluminumStock<br />
+                                Мед: @fact.CurrentCopperStock / @fact.RecommendedCopperStock
+                            </text>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Прогноз на следующий месяц -->
+    <h2 class="mt-5">Прогноз на следующий месяц</h2>
+    @if (ViewBag.LastForecast == null)
+    {
+        <p class="text-muted">Прогноз ещё не сформирован оператором.</p>
+    }
+    else
+    {
+        var forecast = (RadiatorForecasting.Models.ProductionFact)ViewBag.LastForecast;
+        <div class="table-container mx-auto" style="max-width: 100%; overflow-x: auto;">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark text-center">
+                    <tr>
+                        <th>Период (месяц)</th>
+                        <th>Среднемесячная температура окружающей среды (°C)</th>
+                        <th>Цена (руб)</th>
+                        <th>Рыночная цена (руб)</th>
+                        <th>Скидка (%)</th>
+                        <th>Прогноз на месяц [алюминиевые/медные (шт)]</th>
+                        <th>Запасы [текущие/рекомендуемые (кг)]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-center">@forecast.ForecastMonth</td>
+                        <td class="text-center">@forecast.AverageTemperature</td>
+                        <td class="text-center">@forecast.Price</td>
+                        <td class="text-center">@forecast.CompetitorPrice</td>
+                        <td class="text-center">@forecast.Discount</td>
+                        <td class="text-center">@($"{forecast.MonthlyForecastAluminum ?? 0} / {forecast.MonthlyForecastCopper ?? 0}")</td>
+                        <td class="text-center">
+                            <text>
+                                Ал: @forecast.CurrentAluminumStock / @forecast.RecommendedAluminumStock<br />
+                                Мед: @forecast.CurrentCopperStock / @forecast.RecommendedCopperStock
+                            </text>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Сообщения по запасам -->
+        @if (ViewBag.WarningMessage != null && !string.IsNullOrWhiteSpace(ViewBag.WarningMessage.ToString()))
+        {
+            <div class="alert alert-warning mt-3">
+                <pre style="white-space: pre-wrap; font-size: 14px;">@ViewBag.WarningMessage</pre>
+            </div>
+        }
+
+    }
+</div>

@@ -5,16 +5,19 @@
 <div class="container-fluid">
     <div class="row">
         <!-- Боковая панель -->
-        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar vh-100 border-end">
+        <nav class="col-md-3 col-lg-2 d-md-block sidebar vh-100 border-end">
             <ul class="nav flex-column mt-3">
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="ManagerDashboard" asp-action="Index">Главная</a>
+                    <a class="nav-link @(ViewData["Title"] == "Главная" ? "active" : "")"
+                       asp-controller="ManagerDashboard" asp-action="Main">Главная</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="ManagerDashboard" asp-action="GenerateReport">Формирование отчета</a>
+                    <a class="nav-link @(ViewData["Title"] == "Формирование отчета" ? "active" : "")"
+                       asp-controller="ManagerDashboard" asp-action="GenerateReport">Формирование отчета</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" asp-controller="ManagerDashboard" asp-action="NetworkSettings">Настройки сети</a>
+                    <a class="nav-link @(ViewData["Title"] == "Настройки сети" ? "active" : "")"
+                       asp-controller="ManagerDashboard" asp-action="NetworkSettings">Настройки сети</a>
                 </li>
             </ul>
         </nav>
