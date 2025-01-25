@@ -1,0 +1,27 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Боковая панель -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar vh-100 border-end">
+            <ul class="nav flex-column mt-3">
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="ManagerDashboard" asp-action="Index">Главная</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="ManagerDashboard" asp-action="GenerateReport">Формирование отчета</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-controller="ManagerDashboard" asp-action="NetworkSettings">Настройки сети</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Основной контент -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            @RenderBody()
+        </main>
+    </div>
+</div>

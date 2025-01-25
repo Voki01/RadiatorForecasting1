@@ -132,6 +132,42 @@ button.btn {
 }
 
 
+/*Навигационная панель руководителя*/
+
+.sidebar {
+    background-color: #f8f9fa; /* Светлый фон */
+    padding-top: 1rem; /* Отступ сверху */
+    position: fixed; /* Фиксируем панель */
+    left: 0;
+    top: 62px; /* Учитываем высоту хедера */
+    bottom: 0;
+    z-index: 1000; /* Поверх основного контента */
+    width: 15%;
+    border-right: 1px solid #dee2e6;
+}
+
+    .sidebar .nav-link {
+        color: #212529; /* Темный текст */
+        font-weight: 500; /* Полужирный */
+        padding: 0.75rem 1rem; /* Отступы внутри ссылок */
+        transition: all 0.3s ease; /* Плавный эффект при наведении */
+    }
+
+        .sidebar .nav-link:hover {
+            background-color: #e9ecef; /* Светлый фон при наведении */
+            color: #007bff; /* Синий текст */
+            border-radius: 0.25rem;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #007bff; /* Синий фон для активной ссылки */
+            color: white; /* Белый текст */
+            border-radius: 0.25rem;
+        }
+
+    .sidebar .nav-item {
+        margin-bottom: 0.5rem; /* Отступы между элементами */
+    }
 
 
 
