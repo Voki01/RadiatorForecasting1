@@ -1,7 +1,82 @@
-﻿@{
+﻿@using System.Globalization
+@{
     Layout = "~/Views/Shared/_ManagerLayout.cshtml";
     ViewData["Title"] = "Формирование отчета";
 }
 
-<h2>Формирование отчета</h2>
-<p>Здесь будет функционал для генерации отчетов.</p>
+<div class="container-fluid">
+    <!-- Заголовок раздела -->
+    <h1 class="display-5 fw-bold text-center mt-3">Формирование отчёта</h1>
+    <hr class="mt-3 mb-4" style="border-top: 3px solid #b0b0b0;"> <!-- Отделяющая линия -->
+    <!-- Подзаголовок -->
+    <h3 class="text-center fw-bold">Выберите период для формирования статистического отчёта</h3>
+
+    <!-- Вывод предупреждения -->
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger text-center mt-3">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <!-- Форма выбора периода -->
+    <form asp-action="GenerateReport" method="post" class="mt-4">
+        <!-- Блок выбора периода -->
+        <div class="row justify-content-center align-items-center mb-4">
+            <!-- Поле "Начало периода" -->
+            <div class="col-md-5">
+                <label for="startMonth" class="form-label fw-bold">Начало периода:</label>
+                <div class="row gx-2">
+                    <div class="col">
+                        <select id="startMonth" name="startMonth" class="form-select">
+                            <option value="" disabled selected>Месяц</option>
+                            @for (int month = 1; month <= 12; month++)
+                            {
+                                <option value="@month">@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col">
+                        <select id="startYear" name="startYear" class="form-select">
+                            <option value="" disabled selected>Год</option>
+                            @for (int year = DateTime.Now.Year - 10; year <= DateTime.Now.Year; year++)
+                            {
+                                <option value="@year">@year</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Поле "Конец периода" -->
+            <div class="col-md-5">
+                <label for="endMonth" class="form-label fw-bold">Конец периода:</label>
+                <div class="row gx-2">
+                    <div class="col">
+                        <select id="endMonth" name="endMonth" class="form-select">
+                            <option value="" disabled selected>Месяц</option>
+                            @for (int month = 1; month <= 12; month++)
+                            {
+                                <option value="@month">@CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col">
+                        <select id="endYear" name="endYear" class="form-select">
+                            <option value="" disabled selected>Год</option>
+                            @for (int year = DateTime.Now.Year - 10; year <= DateTime.Now.Year; year++)
+                            {
+                                <option value="@year">@year</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Кнопка -->
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-lg px-4 w-100">Сформировать отчёт</button>
+        </div>
+    </form>
+</div>

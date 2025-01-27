@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ClosedXML.Excel;
+using Microsoft.AspNetCore.Mvc;
 using RadiatorForecasting.Data; // Пространство имен для работы с контекстом базы данных
 using RadiatorForecasting.Models; // Пространство имен моделей
 using System.Linq;
@@ -76,11 +77,161 @@ namespace RadiatorForecasting.Controllers
             return View(productionFacts);
         }
 
+        [HttpGet]
         public IActionResult GenerateReport()
         {
             ViewData["Title"] = "Формирование отчета";
             return View();
         }
+
+        [HttpPost]
+        public IActionResult GenerateReport(int startMonth, int startYear, int endMonth, int endYear)
+        {
+            // Проверка на выбор всех полей
+            if (startMonth == 0 || startYear == 0 || endMonth == 0 || endYear == 0)
+            {
+                TempData["ErrorMessage"] = "Пожалуйста, выберите все поля для периода.";
+                return RedirectToAction("GenerateReport");
+            }
+
+            // Создаём диапазон дат
+            var startDate = new DateTime(startYear, startMonth, 1);
+            var endDate = new DateTime(endYear, endMonth, DateTime.DaysInMonth(endYear, endMonth));
+
+            // Проверка корректности диапазона
+            if (startDate > endDate)
+            {
+                TempData["ErrorMessage"] = "Начальный период не может быть позже конечного. Пожалуйста, выберите корректный диапазон.";
+                return RedirectToAction("GenerateReport");
+            }
+
+            // Получаем данные из базы
+            var productionFacts = _context.ProductionFacts
+                .AsEnumerable()
+                .Where(fact => DateTime.TryParse(fact.ForecastMonth, out var factDate) &&
+                               factDate >= startDate && factDate <= endDate)
+                .ToList();
+
+            // Собираем предупреждения
+            var warningsByPeriod = new Dictionary<string, List<string>>();
+            foreach (var fact in productionFacts)
+            {
+                if (fact.MonthlyForecastAluminum.HasValue && fact.MonthlyForecastCopper.HasValue)
+                {
+                    var aluminumShortage = Math.Max(0, fact.RecommendedAluminumStock.GetValueOrDefault() - fact.CurrentAluminumStock.GetValueOrDefault());
+                    var copperShortage = Math.Max(0, fact.RecommendedCopperStock.GetValueOrDefault() - fact.CurrentCopperStock.GetValueOrDefault());
+
+                    if (aluminumShortage > 0 || copperShortage > 0)
+                    {
+                        var warnings = new List<string>();
+                        if (aluminumShortage > 0)
+                        {
+                            warnings.Add($"Не хватает {aluminumShortage} кг алюминия для производства {fact.MonthlyForecastAluminum.Value} радиаторов.");
+                        }
+                        if (copperShortage > 0)
+                        {
+                            warnings.Add($"Не хватает {copperShortage} кг меди для производства {fact.MonthlyForecastCopper.Value} радиаторов.");
+                        }
+                        warnings.Add("Рекомендуется пополнить запасы.");
+                        warnings.Add($"Текущих запасов алюминия хватит на производство {fact.CurrentAluminumStock.GetValueOrDefault() / ProductionFact.MaterialPerAluminumUnit} радиаторов.");
+                        warnings.Add($"Текущих запасов меди хватит на производство {fact.CurrentCopperStock.GetValueOrDefault() / ProductionFact.MaterialPerCopperUnit} радиаторов.");
+
+                        warningsByPeriod[fact.ForecastMonth] = warnings;
+                    }
+                }
+            }
+
+            // Генерация Excel
+            using (var workbook = new XLWorkbook())
+            {
+                var worksheet = workbook.Worksheets.Add("Отчёт");
+
+                // Заголовок
+                worksheet.Cell(1, 1).Value = "Отчёт о выпуске продукции";
+                worksheet.Cell(1, 1).Style.Font.Bold = true;
+                worksheet.Cell(1, 1).Style.Font.FontSize = 16;
+                worksheet.Range(1, 1, 1, 9).Merge().Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+
+                // Заголовки таблицы
+                var headers = new[]
+                {
+            "Период (месяц)", "Среднемесячная температура окружающей среды (°C)", "Цена (руб)",
+            "Рыночная цена (руб)", "Скидка (%)", "Прогноз на месяц [алюминиевые/медные (шт)]",
+            "Запасы [текущие/рекомендуемые (кг)]", "Количество выпущенных [алюминиевые/медные (шт)]"
+        };
+
+                for (int i = 0; i < headers.Length; i++)
+                {
+                    worksheet.Cell(2, i + 1).Value = headers[i];
+                    worksheet.Cell(2, i + 1).Style.Font.Bold = true;
+                    worksheet.Cell(2, i + 1).Style.Alignment.SetHorizontal(XLAlignmentHorizontalValues.Center);
+                    worksheet.Cell(2, i + 1).Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+                }
+
+                // Данные таблицы
+                for (int i = 0; i < productionFacts.Count; i++)
+                {
+                    var fact = productionFacts[i];
+                    worksheet.Cell(i + 3, 1).Value = fact.ForecastMonth;
+                    worksheet.Cell(i + 3, 2).Value = fact.AverageTemperature;
+                    worksheet.Cell(i + 3, 3).Value = fact.Price;
+                    worksheet.Cell(i + 3, 4).Value = fact.CompetitorPrice;
+                    worksheet.Cell(i + 3, 5).Value = fact.Discount;
+                    worksheet.Cell(i + 3, 6).Value = $"{fact.MonthlyForecastAluminum ?? 0} / {fact.MonthlyForecastCopper ?? 0}";
+                    worksheet.Cell(i + 3, 7).Value = $"Ал: {fact.CurrentAluminumStock ?? 0} / {fact.RecommendedAluminumStock ?? 0}\n" +
+                                                     $"Мед: {fact.CurrentCopperStock ?? 0} / {fact.RecommendedCopperStock ?? 0}";
+                    worksheet.Cell(i + 3, 8).Value = $"{fact.AluminumRadiatorsProduced} / {fact.CopperRadiatorsProduced}";
+
+                    // Выравнивание ячеек
+                    for (int j = 1; j <= 8; j++)
+                    {
+                        worksheet.Cell(i + 3, j).Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+                        worksheet.Cell(i + 3, j).Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+                    }
+                }
+
+                // Добавляем предупреждения в конец отчета
+                if (warningsByPeriod.Any())
+                {
+                    var warningStartRow = productionFacts.Count + 4;
+                    worksheet.Cell(warningStartRow, 1).Value = "Предупреждения по периодам:";
+                    worksheet.Cell(warningStartRow, 1).Style.Font.Bold = true;
+
+                    int row = warningStartRow + 1;
+                    foreach (var period in warningsByPeriod)
+                    {
+                        worksheet.Cell(row, 1).Value = $"Период: {period.Key}";
+                        worksheet.Cell(row, 1).Style.Font.Bold = true;
+                        row++;
+
+                        foreach (var warning in period.Value)
+                        {
+                            worksheet.Cell(row, 1).Value = warning;
+                            row++;
+                        }
+
+                        row++; // Пропуск строки между периодами
+                    }
+                }
+
+                // Настраиваем ширину столбцов
+                worksheet.Columns().AdjustToContents();
+
+                // Сохраняем отчет
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    var content = stream.ToArray();
+                    var fileName = $"Отчет_с_{startDate:MMMM_yyyy}_по_{endDate:MMMM_yyyy}.xlsx";
+                    return File(content, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileName);
+                }
+            }
+        }
+
+
+
+
+
 
         public IActionResult NetworkSettings()
         {
