@@ -1,8 +1,40 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+ <style>
+    /* ---------- Фиксация хедера и синхронизация с боковой панелью ---------- */
+    /* Добавить в самое начало файла */
+    header {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        height: 62px; /* Подставьте точную высоту вашего хедера */
+        background: white;
+        z-index: 1030; /* Важно: должен быть выше, чем у сайдбара */
+    }
 
-<div class="container-fluid">
+    /* Обновляем стили сайдбара */
+    .sidebar {
+        top: 62px !important; /* Перебиваем другие стили */
+        z-index: 1020 !important; /* Ниже хедера */
+        margin-left: 0 !important; /* Убираем возможные отступы */
+    }
+
+    /* Исправляем основной контент */
+    main {
+        margin-top: 32px !important; /* Высота хедера */
+        margin-left: 5% !important; /* Ширина сайдбара из вашего CSS (width:15%) */
+        padding: 5px;
+        min-height: calc(100vh - 62px); /* Чтобы контент не "проваливался" */
+    }
+
+    /* Убираем конфликты с Bootstrap */
+    .row {
+        --bs-gutter-x: 0 !important; /* Отключаем горизонтальные отступы сетки */
+    }
+ </style>
+
+ <div class="container-fluid">
     <div class="row">
         <!-- Боковая панель -->
         <nav class="col-md-3 col-lg-2 d-md-block sidebar vh-100 border-end">
