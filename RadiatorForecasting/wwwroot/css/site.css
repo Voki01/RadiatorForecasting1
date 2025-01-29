@@ -171,3 +171,29 @@ button.btn {
 
 
 
+ .scrollable-table thead th {
+    text-align: center;
+    vertical-align: middle;
+    background-color: #343a40; /* Тёмный фон */
+    color: #ffffff; /* Белый текст */
+    font-weight: bold; /* Полужирный шрифт */
+}
+
+
+.metrics-table th {
+    background-color: #343a40 !important; /* Тёмный фон */
+    color: #ffffff !important; /* Белый текст */
+    font-weight: bold !important; /* Полужирный шрифт */
+}
+
+
+.scrollable-table {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+    .scrollable-table thead {
+        position: sticky;
+        top: 0;
+    }
+

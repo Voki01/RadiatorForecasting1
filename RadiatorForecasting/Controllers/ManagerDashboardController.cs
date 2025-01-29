@@ -3,16 +3,22 @@ using Microsoft.AspNetCore.Mvc;
 using RadiatorForecasting.Data; // Пространство имен для работы с контекстом базы данных
 using RadiatorForecasting.Models; // Пространство имен моделей
 using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace RadiatorForecasting.Controllers
 {
     public class ManagerDashboardController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public ManagerDashboardController(ApplicationDbContext context)
+        public ManagerDashboardController(ApplicationDbContext context, IHttpClientFactory httpClientFactory)
         {
             _context = context;
+            _httpClientFactory = httpClientFactory;
+            _httpClientFactory = httpClientFactory;
         }
 
         public IActionResult Index()
@@ -76,6 +82,9 @@ namespace RadiatorForecasting.Controllers
 
             return View(productionFacts);
         }
+
+        
+        //Раздел формирования отчета 
 
         [HttpGet]
         public IActionResult GenerateReport()
@@ -229,15 +238,53 @@ namespace RadiatorForecasting.Controllers
         }
 
 
-
-
-
-
+    //Раздел нейронная сеть
         public IActionResult NetworkSettings()
         {
             ViewData["Title"] = "Настройки сети";
             return View();
         }
+
+        // Метод для загрузки метрик и архитектуры через API
+
+        [HttpGet]
+        public async Task<IActionResult> LoadNetworkMetrics()
+        {
+            using var client = new HttpClient();
+            try
+            {
+                // Запросы к Python API
+                var metricsResponse = await client.GetAsync("http://127.0.0.1:5000/metrics");
+                var progressResponse = await client.GetAsync("http://127.0.0.1:5000/training-progress");
+                var architectureResponse = await client.GetAsync("http://127.0.0.1:5000/architecture");
+
+                // Проверка успешности
+                if (!metricsResponse.IsSuccessStatusCode || !progressResponse.IsSuccessStatusCode || !architectureResponse.IsSuccessStatusCode)
+                {
+                    return Json(new { success = false, message = "Ошибка получения данных от Python API" });
+                }
+
+                // Десериализация данных
+                var metrics = await metricsResponse.Content.ReadAsStringAsync();
+                var progress = await progressResponse.Content.ReadAsStringAsync();
+                var architecture = await architectureResponse.Content.ReadAsStringAsync();
+
+                return Json(new
+                {
+                    success = true,
+                    metrics = JsonSerializer.Deserialize<object>(metrics),
+                    progress = JsonSerializer.Deserialize<object>(progress),
+                    architecture = JsonSerializer.Deserialize<object>(architecture)
+                });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка: {ex.Message}");
+                return Json(new { success = false, message = "Ошибка подключения к Python API" });
+            }
+        }
+
+
 
     }
 }
