@@ -6,24 +6,51 @@
 
 <h1>Управление количеством выпущенных радиаторов</h1>
 
-<!-- Таблица -->
-<table class="table table-bordered mt-4">
-    <thead>
-        <tr>
-            <th>Период (месяц)</th>
-            <th>Количество выпущенных (алюминиевые / медные)</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Period</td>
-                <td>@($"{item.AluminumReleased} / {item.CopperReleased}")</td>
-            </tr>
+<style>
+    .table-container {
+        max-height: 400px; /* Ограничение высоты таблицы */
+        overflow-y: auto; /* Включаем вертикальную прокрутку */
+        border: 1px solid #ddd; /* Граница таблицы */
+        background-color: #f9f9f9; /* Светлый фон */
+        padding: 0; /* Убираем лишние отступы */
+        margin: 0; /* Убираем внешние отступы */
+    }
+
+        .table-container .table {
+            margin: 0; /* Убираем отступы у таблицы */
+            border-collapse: collapse; /* Убираем промежутки между ячейками */
         }
-    </tbody>
-</table>
+
+        .table-container thead th {
+            position: sticky; /* Фиксация заголовков */
+            top: 0; /* Прижимаем к верхней части контейнера */
+            z-index: 2; /* Фиксируем поверх содержимого */
+            background-color: #343a40; /* Темный фон для заголовков */
+            color: white; /* Белый цвет текста */
+            padding: 8px; /* Отступы внутри ячеек заголовков */
+            border-bottom: 1px solid #ddd; /* Граница снизу */
+        }
+</style>
+<!-- Таблица -->
+<div class="table-container">
+    <table class="table table-bordered mt-1">
+        <thead>
+            <tr>
+                <th>Период (месяц)</th>
+                <th>Количество выпущенных (алюминиевые / медные)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Period</td>
+                    <td>@($"{item.AluminumReleased} / {item.CopperReleased}")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 
 <!-- Форма -->
 <h4 class="mt-4">Добавить количество выпущенных радиаторов</h4>
