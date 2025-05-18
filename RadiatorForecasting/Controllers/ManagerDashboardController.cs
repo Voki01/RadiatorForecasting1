@@ -285,6 +285,38 @@ namespace RadiatorForecasting.Controllers
         }
 
 
+        //Функция принять отклонить прогноз
+        [HttpPost]
+        public async Task<IActionResult> ApproveForecast(int id)
+        {
+            var forecast = await _context.ProductionFacts.FindAsync(id);
+            if (forecast == null)
+                return NotFound();
+
+            forecast.ForecastStatus = "Принят";
+            forecast.RejectionReason = null;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Main");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RejectForecast(int id, string reason)
+        {
+            var forecast = await _context.ProductionFacts.FindAsync(id);
+            if (forecast == null)
+                return NotFound();
+
+            forecast.ForecastStatus = "Отклонён";
+            forecast.RejectionReason = reason;
+            forecast.RejectionDate = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Main");
+        }
+
 
     }
 }

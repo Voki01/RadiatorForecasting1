@@ -35,5 +35,11 @@
         public const int MaterialPerAluminumUnit = 3; // 3 кг алюминия на 1 радиатор
         public const int MaterialPerCopperUnit = 5; // 5 кг меди на 1 радиатор
 
+        // Новые поля для статуса прогноза
+        public string ForecastStatus { get; set; } = "Ожидает";
+        public string? RejectionReason { get; set; }
+        public DateTime? RejectionDate { get; set; }
+
+
     }
 }

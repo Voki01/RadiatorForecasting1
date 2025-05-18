@@ -1,0 +1,33 @@
+﻿@model IEnumerable<RadiatorForecasting.Models.ProductionFact>
+@{
+    ViewData["Title"] = "Уведомления";
+}
+
+<h2 class="mt-4 mb-3">Отклонённые прогнозы</h2>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Отклонённых прогнозов пока нет.</div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark text-center">
+            <tr>
+                <th>Месяц</th>
+                <th>Причина отклонения</th>
+                <th>Дата отклонения</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in Model)
+            {
+                <tr>
+                    <td class="text-center">@forecast.ForecastMonth</td>
+                    <td>@forecast.RejectionReason</td>
+                    <td class="text-center">@forecast.RejectionDate?.ToString("dd.MM.yyyy HH:mm")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -95,5 +95,52 @@
             </div>
         }
 
+        <!-- Статус прогноза (отображение кнопок)-->
+        @if (forecast.ForecastStatus == "Ожидает")
+        {
+            <div class="mt-3">
+                <form method="post" asp-action="ApproveForecast" asp-route-id="@forecast.Id" class="d-inline">
+                    <button type="submit" class="btn btn-success">Принять</button>
+                </form>
+
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal">
+                    Отклонить
+                </button>
+            </div>
+
+            <!-- Модальное окно для причины отклонения -->
+            <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form method="post" asp-action="RejectForecast" asp-route-id="@forecast.Id">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="rejectModalLabel">Причина отклонения прогноза</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <textarea class="form-control" name="reason" rows="4" required placeholder="Укажите причину отклонения..."></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-danger">Отклонить</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="mt-3">
+                <p><strong>Статус прогноза:</strong> @forecast.ForecastStatus</p>
+                @if (forecast.ForecastStatus == "Отклонён")
+                {
+                    <p><strong>Причина отклонения:</strong> @forecast.RejectionReason</p>
+                }
+            </div>
+        }
+
+
+
     }
 </div>
