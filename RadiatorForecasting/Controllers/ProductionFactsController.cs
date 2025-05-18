@@ -146,6 +146,13 @@ namespace RadiatorForecasting.Controllers
                 existingForecast.CurrentCopperStock = copperStock;
                 existingForecast.RecommendedAluminumStock = recommendedAluminumStock;
                 existingForecast.RecommendedCopperStock = recommendedCopperStock;
+               
+                // Сброс статуса
+                existingForecast.ForecastStatus = "Ожидает";
+                existingForecast.RejectionReason = null;
+                existingForecast.RejectionDate = null;
+                existingForecast.IsRead = null;
+
             }
             else
             {

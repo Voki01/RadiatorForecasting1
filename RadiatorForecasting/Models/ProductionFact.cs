@@ -39,6 +39,8 @@
         public string ForecastStatus { get; set; } = "Ожидает";
         public string? RejectionReason { get; set; }
         public DateTime? RejectionDate { get; set; }
+        public bool? IsRead { get; set; } = false;
+
 
 
     }

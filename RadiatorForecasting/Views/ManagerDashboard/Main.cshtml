@@ -98,15 +98,13 @@
         <!-- Статус прогноза (отображение кнопок)-->
         @if (forecast.ForecastStatus == "Ожидает")
         {
-            <div class="mt-3">
-                <form method="post" asp-action="ApproveForecast" asp-route-id="@forecast.Id" class="d-inline">
-                    <button type="submit" class="btn btn-success">Принять</button>
+            <div class="d-flex justify-content-center mt-4 gap-3">
+                <form method="post" asp-action="ApproveForecast" asp-route-id="@forecast.Id">
+                    <button type="submit" class="btn btn-outline-dark px-4">Принять</button>
                 </form>
-
-                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal">
-                    Отклонить
-                </button>
+                <button type="button" class="btn btn-outline-dark px-4" data-bs-toggle="modal" data-bs-target="#rejectModal">Отклонить</button>
             </div>
+
 
             <!-- Модальное окно для причины отклонения -->
             <div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">

@@ -1,4 +1,15 @@
-﻿<!DOCTYPE html>
+﻿@inject RadiatorForecasting.Data.ApplicationDbContext Db
+
+@{
+    int unreadCount = 0;
+    if (User.IsInRole("Оператор"))
+    {
+        unreadCount = Db.ProductionFacts
+            .Count(p => p.ForecastStatus == "Отклонён" && (p.IsRead == false || p.IsRead == null));
+    }
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -59,11 +70,16 @@
                     <!-- Уведомления -->
                     @if (User.IsInRole("Оператор"))
                     {
-                        <a asp-controller="Home" asp-action="Notifications" class="text-decoration-none position-relative me-3" id="notificationIcon">
-                            <i class="fas fa-bell fa-1-7x text-warning"></i>
-                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" id="notificationCount">
-                                0
-                            </span>
+                        <a asp-controller="Home" asp-action="Notifications"
+                           class="text-decoration-none position-relative d-flex align-items-center me-3"
+                           id="notificationIcon" style="margin-top: 2px;">
+                            <i class="fas fa-bell text-warning" style="font-size: 26px; line-height: 1;"></i>
+                            @if (unreadCount > 0)
+                            {
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    @unreadCount
+                                </span>
+                            }
                         </a>
                     }
 

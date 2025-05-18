@@ -50,7 +50,15 @@ namespace RadiatorForecasting.Controllers
                 .OrderByDescending(p => p.Id)
                 .ToListAsync();
 
+            foreach (var item in rejectedForecasts)
+            {
+                item.IsRead = true;
+            }
+            await _context.SaveChangesAsync();
+
+
             return View(rejectedForecasts);
+
         }
 
     }
