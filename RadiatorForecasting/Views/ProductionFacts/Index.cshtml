@@ -96,7 +96,10 @@
                    value="@ViewBag.InputValues?.discount">
         </div>
     </div>
-    <button type="submit" class="btn btn-primary btn-lg">Спрогнозировать</button>
+    
+        <button id="fillFrom1C" type="button" class="btn btn-outline-secondary">Загрузить из 1С</button>
+        <button type="submit" class="btn btn-primary btn-lg">Спрогнозировать</button>
+   
 </form>
 
 @if (TempData["ExistingForecast"] != null)
@@ -151,5 +154,22 @@
     <div class="alert alert-warning mt-3">
         <pre style="white-space: pre-wrap; font-size: 14px;">@TempData["WarningMessage"]</pre>
     </div>
+}
+
+
+@section Scripts {
+    <script>
+        document.getElementById("fillFrom1C").addEventListener("click", function () {
+            fetch("/ProductionFacts/AutoFillFrom1C")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("price").value = data.price;
+                    document.getElementById("competitorPrice").value = data.competitorPrice;
+                    document.getElementById("discount").value = data.discount;
+
+                    alert("Значения из 1С успешно подставлены!");
+                });
+        });
+    </script>
 }
 

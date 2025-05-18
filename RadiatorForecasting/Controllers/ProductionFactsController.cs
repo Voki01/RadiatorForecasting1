@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Text;
 using System.Threading.Tasks;
+using RadiatorForecasting.Services;
 
 namespace RadiatorForecasting.Controllers
 {
@@ -15,10 +16,11 @@ namespace RadiatorForecasting.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public ProductionFactsController(ApplicationDbContext context, IHttpClientFactory httpClientFactory)
+        public ProductionFactsController(ApplicationDbContext context, OneCServiceMock oneCMock, IHttpClientFactory httpClientFactory)
         {
             _context = context;
             _httpClientFactory = httpClientFactory;
+            _oneCMock = oneCMock; //для мок сервиса (работа с 1С)
         }
 
         public IActionResult Index()
@@ -172,6 +174,18 @@ namespace RadiatorForecasting.Controllers
 
             return RedirectToAction("Index");
         }
+
+
+        //Загрузка данных из 1С
+        private readonly OneCServiceMock _oneCMock;
+        //выше в конструкторе осуществилась передача
+        [HttpGet]
+        public IActionResult AutoFillFrom1C()
+        {
+            var data = _oneCMock.GetLatestParams();
+            return Json(data);
+        }
+
 
 
 

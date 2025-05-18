@@ -34,6 +34,14 @@
                     <td id="mse">Загрузка...</td>
                 </tr>
                 <tr>
+                    <td>Средняя абсолютная ошибка (MAE)</td>
+                    <td id="mae">Загрузка...</td>
+                </tr>
+                <tr>
+                    <td>Средняя абсолютная процентная ошибка (MAPE)</td>
+                    <td id="mape">Загрузка...</td>
+                </tr>
+                <tr>
                     <td>Точность</td>
                     <td id="accuracy">Загрузка...</td>
                 </tr>
@@ -87,6 +95,8 @@
 
                     // Метрики
                     document.getElementById("mse").textContent = data.metrics.MSE.toFixed(6);
+                    document.getElementById("mae").textContent = data.metrics.MAE.toFixed(6);
+                    document.getElementById("mape").textContent = data.metrics.MAPE.toFixed(6);
                     document.getElementById("accuracy").textContent = data.metrics.Accuracy.toFixed(6);
                     document.getElementById("metrics").classList.remove("d-none");
 

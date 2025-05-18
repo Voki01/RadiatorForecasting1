@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RadiatorForecasting.Data;
 using Microsoft.Extensions.DependencyInjection;
+using RadiatorForecasting.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +46,10 @@ builder.Services.AddAuthentication()
         options.LoginPath = "/Account/Login";
         options.LogoutPath = "/Account/Logout";
     });
+
+//мок сервис (для 1С был добавлен)
+builder.Services.AddScoped<OneCServiceMock>();
+
 
 var app = builder.Build();
 
