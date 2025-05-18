@@ -23,13 +23,24 @@
                     <label for="password" class="form-label">Пароль</label>
                     <input type="password" class="form-control" id="password" name="password" required>
                 </div>
+                <div class="form-check mt-2">
+                    <input type="checkbox" class="form-check-input" id="showPasswordCheck" onclick="togglePasswordVisibility()">
+                    <label class="form-check-label" for="showPasswordCheck">Показать пароль</label>
+                </div>
                 @if (!ViewData.ModelState.IsValid)
                 {
                     <div class="text-danger">@Html.ValidationSummary()</div>
                 }
-                <button type="submit" class="btn btn-primary w-100">Войти</button>
+                <button type="submit" class="btn btn-primary w-100 mt-3">Войти</button>
             </form>
         </div>
     </div>
+
+    <script>
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById("password");
+            passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+        }
+    </script>
 </body>
 </html>
